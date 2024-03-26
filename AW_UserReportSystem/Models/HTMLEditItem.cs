@@ -36,32 +36,44 @@ namespace AW_UserReportSystem.Models
 
 			return new HtmlString(writer.ToString());
 		}
-		public static IHtmlContent ShowItem<TModel, TValue>(this IHtmlHelper<TModel> h, Expression<Func<TModel, TValue>> e)
-        {
+		public static IHtmlContent ShowItem<TModel, TValue>(this IHtmlHelper<TModel> h, Expression<Func<TModel, TValue>> e) {
+			var label = h.LabelFor(e, new { @class = "col-sm-2 control-label" });
+			var value = h.DisplayFor(e, new { @class = "col-sm-10" });
 
-            var label = h.LabelFor(e, new { @class = "col-sm-2 control-label" });
-            var value = h.DisplayFor(e, new { @class = "col-sm-10" });
+			var dtDiv = new TagBuilder("dt");
+			dtDiv.AddCssClass("col-sm-2");
+			dtDiv.InnerHtml.AppendHtml(label);
 
-            var dtDiv = new TagBuilder("dt");
-            dtDiv.AddCssClass("col-sm-2");
-            dtDiv.InnerHtml.AppendHtml(label);
+			var ddDiv = new TagBuilder("dd");
+			ddDiv.AddCssClass("col-sm-10");
+			ddDiv.InnerHtml.AppendHtml(value);
 
-            var ddDiv = new TagBuilder("dd");
-            ddDiv.AddCssClass("col-sm-10");
-            ddDiv.InnerHtml.AppendHtml(value);
+			var dl = new TagBuilder("dl");
+			dl.AddCssClass("row");
+			dl.InnerHtml.AppendHtml(dtDiv);
+			dl.InnerHtml.AppendHtml(ddDiv);
 
-            var dl = new TagBuilder("dl");
-            dl.AddCssClass("row");
-            dl.InnerHtml.AppendHtml(dtDiv);
-            dl.InnerHtml.AppendHtml(ddDiv);
+			if(e.Body.NodeType == ExpressionType.MemberAccess && ((MemberExpression)e.Body).Member.Name == "Description") {
+				var descriptionLabel = new TagBuilder("label");
+				descriptionLabel.AddCssClass("col-sm-2 control-label");
 
-            var writer = new StringWriter();
-            dl.WriteTo(writer, HtmlEncoder.Default);
 
-            return new HtmlString(writer.ToString());
+				var descriptionTextBox = h.TextAreaFor(e, new { @class = "form-control", rows = 10 });
 
-        }
-        public static IHtmlContent ShowTable<TModel>(this IHtmlHelper<IEnumerable<TModel>> h,
+				var descriptionDiv = new TagBuilder("div");
+				descriptionDiv.AddCssClass("col-sm-10");
+				descriptionDiv.InnerHtml.AppendHtml(descriptionTextBox);
+
+				dl.InnerHtml.AppendHtml(descriptionLabel);
+				dl.InnerHtml.AppendHtml(descriptionDiv);
+			}
+
+			var writer = new StringWriter();
+			dl.WriteTo(writer, HtmlEncoder.Default);
+
+			return new HtmlString(writer.ToString());
+		}
+		public static IHtmlContent ShowTable<TModel>(this IHtmlHelper<IEnumerable<TModel>> h,
             IEnumerable<TModel> items) where TModel : Entity
         {
 
@@ -96,9 +108,22 @@ namespace AW_UserReportSystem.Models
 		private static TagBuilder createBody<TModel>(this IHtmlHelper<IEnumerable<TModel>> h, PropertyInfo[] properties, IEnumerable<TModel> items) where TModel : Entity {
 			var tbody = new TagBuilder("tbody");
 
-			foreach(var item in items) {
+            var sortedItems = items.OrderBy(item =>
+            {
+                var solveByDate = (DateTime)item.GetType().GetProperty("SolveByDate").GetValue(item);
+                var timeDifference = solveByDate - DateTime.Now;
+                return timeDifference;
+            });
+
+            foreach(var item in sortedItems) {
 				var tr = new TagBuilder("tr");
-				TagBuilder td;
+                var solveByDate = (DateTime)item.GetType().GetProperty("SolveByDate").GetValue(item);
+                var timeDifference = solveByDate - DateTime.Now;
+                if(timeDifference.TotalHours < 1) {
+                    tr.AddCssClass("table-danger"); 
+                }
+                TagBuilder td;
+
 				foreach(var property in properties) {
 					td = new TagBuilder("td");
 					var value = property?.GetValue(item)?.ToString() ?? string.Empty;
@@ -134,8 +159,6 @@ namespace AW_UserReportSystem.Models
             th.InnerHtml.AppendHtml(v);
             tr.InnerHtml.AppendHtml(th);
         }
-
         private static PropertyInfo[] getProperties(Type type) => type?.GetProperties()?.Where(x => x.Name != "Id")?.ToArray() ?? [];
-
     }
 }
