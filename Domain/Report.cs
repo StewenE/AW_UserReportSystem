@@ -1,18 +1,16 @@
-﻿
+﻿using Domain;
 using System.ComponentModel.DataAnnotations;
 
 namespace AW_UserReportSystem.Models {
     public class Report : Entity {
-        [StringLength(60, MinimumLength = 3)]
-        [Required]
         public string? Name { get; set; }
-		[DataType(DataType.MultilineText)]
-		public string? Description { get; set; }
+        public string? Description { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         public DateTime SubmitDate { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         public DateTime SolveByDate { get; set; }
+
     }
 }

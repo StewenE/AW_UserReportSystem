@@ -9,11 +9,10 @@ namespace AW_UserReportSystem.Data
 {
     public class AW_UserReportSystemContext : DbContext
     {
-        public AW_UserReportSystemContext (DbContextOptions<AW_UserReportSystemContext> options)
-            : base(options)
-        {
+        public AW_UserReportSystemContext(DbContextOptions options) : base(options) {
         }
 
-        public DbSet<AW_UserReportSystem.Models.Report> Report { get; set; } = default!;
+        public DbSet<Report> Report { get; set; }
+
     }
 }

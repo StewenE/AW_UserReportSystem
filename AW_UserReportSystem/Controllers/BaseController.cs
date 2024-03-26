@@ -52,7 +52,8 @@ namespace AW_UserReportSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(report);
+				report.SubmitDate = DateTime.Now;
+				_context.Add(report);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
