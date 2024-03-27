@@ -1,16 +1,9 @@
-﻿using AW_UserReportSystem.Models;
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using System.Web;
 
 
 namespace AW_UserReportSystem.Models
@@ -43,28 +36,29 @@ namespace AW_UserReportSystem.Models
 			var dtDiv = new TagBuilder("dt");
 			dtDiv.AddCssClass("col-sm-2");
 			dtDiv.InnerHtml.AppendHtml(label);
-
-			var ddDiv = new TagBuilder("dd");
+			
+            var ddDiv = new TagBuilder("dd");
 			ddDiv.AddCssClass("col-sm-10");
-			ddDiv.InnerHtml.AppendHtml(value);
+            
+            if(IsDescription(e)) {
+                ddDiv.InnerHtml.AppendHtml("");
+            }
+            else {
+                ddDiv.InnerHtml.AppendHtml(value);
+            }
 
-			var dl = new TagBuilder("dl");
+            var dl = new TagBuilder("dl");
 			dl.AddCssClass("row");
 			dl.InnerHtml.AppendHtml(dtDiv);
 			dl.InnerHtml.AppendHtml(ddDiv);
 
-			if(e.Body.NodeType == ExpressionType.MemberAccess && ((MemberExpression)e.Body).Member.Name == "Description") {
-				var descriptionLabel = new TagBuilder("label");
-				descriptionLabel.AddCssClass("col-sm-2 control-label");
+			if(IsDescription(e)) {
 
-
-				var descriptionTextBox = h.TextAreaFor(e, new { @class = "form-control", rows = 10 });
+                var descriptionTextBox = h.TextAreaFor(e, new { @class = "form-control", rows = 10 });
 
 				var descriptionDiv = new TagBuilder("div");
-				descriptionDiv.AddCssClass("col-sm-10");
 				descriptionDiv.InnerHtml.AppendHtml(descriptionTextBox);
 
-				dl.InnerHtml.AppendHtml(descriptionLabel);
 				dl.InnerHtml.AppendHtml(descriptionDiv);
 			}
 
@@ -73,6 +67,13 @@ namespace AW_UserReportSystem.Models
 
 			return new HtmlString(writer.ToString());
 		}
+
+        internal static bool IsDescription<TModel, TValue>(Expression<Func<TModel, TValue>> e) {
+            if(e.Body.NodeType == ExpressionType.MemberAccess && ((MemberExpression)e.Body).Member.Name == "Description") {
+                return true;
+            }
+            return false;
+        }
 		public static IHtmlContent ShowTable<TModel>(this IHtmlHelper<IEnumerable<TModel>> h,
             IEnumerable<TModel> items) where TModel : Entity
         {
@@ -105,8 +106,10 @@ namespace AW_UserReportSystem.Models
             return thead;
         }
 
-		private static TagBuilder createBody<TModel>(this IHtmlHelper<IEnumerable<TModel>> h, PropertyInfo[] properties, IEnumerable<TModel> items) where TModel : Entity {
-			var tbody = new TagBuilder("tbody");
+		private static TagBuilder createBody<TModel>(this IHtmlHelper<IEnumerable<TModel>>
+            h, PropertyInfo[] properties, IEnumerable<TModel> items) where TModel : Entity {
+			
+            var tbody = new TagBuilder("tbody");
 
             var sortedItems = items.OrderBy(item =>
             {
@@ -144,7 +147,8 @@ namespace AW_UserReportSystem.Models
 
 			return tbody;
 		}
-		private static void addLink<TModel>(this IHtmlHelper<IEnumerable<TModel>> h, string action, string id, TagBuilder td, bool isLast = false)
+		private static void addLink<TModel>(this IHtmlHelper<IEnumerable<TModel>>
+            h, string action, string id, TagBuilder td, bool isLast = false)
         {
             var link = h.ActionLink(action, action, new { Id = id });
             td.InnerHtml.AppendHtml(link);
