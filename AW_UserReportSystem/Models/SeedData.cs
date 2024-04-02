@@ -1,10 +1,6 @@
 ﻿using AW_UserReportSystem.Data;
-using AW_UserReportSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using AW_UserReportSystem.Data;
-using System;
-using System.Linq;
+using Domain;
 
 
 
