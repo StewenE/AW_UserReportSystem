@@ -7,7 +7,6 @@ namespace AW_UserReportSystem.Data
     {
         public AW_UserReportSystemContext(DbContextOptions options) : base(options) {
         }
-
         public DbSet<Report> Report { get; set; }
 
     }

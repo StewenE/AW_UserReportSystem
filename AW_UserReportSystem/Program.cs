@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using AW_UserReportSystem.Data;
 using AW_UserReportSystem.Models;
-using MvcMovie.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AW_UserReportSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AW_UserReportSystemContext") ?? throw new InvalidOperationException("Connection string 'AW_UserReportSystemContext' not found.")));

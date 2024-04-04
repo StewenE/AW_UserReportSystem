@@ -1,15 +1,15 @@
-﻿using Domain;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain {
     public sealed class Report : Entity {
         public string? Name { get; set; }
-        public string? Description { get; set; }
+		[DataType(DataType.MultilineText)]
+		public string? Description { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime SubmitDate { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime SolveByDate { get; set; }
 
     }
