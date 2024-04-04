@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain {
-    public class Report : Entity {
+    public sealed class Report : Entity {
         public string? Name { get; set; }
         public string? Description { get; set; }
 
