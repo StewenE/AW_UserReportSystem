@@ -11,6 +11,5 @@ namespace Domain {
 
         [DataType(DataType.DateTime)]
         public DateTime SolveByDate { get; set; }
-
     }
 }

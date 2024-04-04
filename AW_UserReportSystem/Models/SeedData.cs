@@ -6,8 +6,7 @@ namespace AW_UserReportSystem.Models;
 public static class SeedData {
     public static void Initialize(IServiceProvider serviceProvider) {
         using(var context = new AW_UserReportSystemContext(
-            serviceProvider.GetRequiredService<
-                DbContextOptions<AW_UserReportSystemContext>>())) {
+            serviceProvider.GetRequiredService<DbContextOptions<AW_UserReportSystemContext>>())) {
             if(context.Report.Any()) {
                 return;   
             }

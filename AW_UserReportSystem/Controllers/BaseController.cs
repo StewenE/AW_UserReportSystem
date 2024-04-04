@@ -62,8 +62,7 @@ namespace AW_UserReportSystem.Controllers {
                 return NotFound();
             }
 
-            var report = await _context.Report
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var report = await _context.Report.FirstOrDefaultAsync(m => m.Id == id);
             if (report == null)
             {
                 return NotFound();
